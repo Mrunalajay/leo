@@ -1,0 +1,55 @@
+master slave jk
+module ms_ff(j,k,clk,q,qb);
+input j,k,clk;
+output q,qb;
+jk_ff u1(j,k,clk,qm,qmb);
+jk_ff u2(qm,qmb,~clk,q,qb);
+endmodule
+module jk_ff(j,k,clk,q,qb);
+input j,k,clk;
+output reg q,qb;
+reg kk=1'b0;
+reg[1:0]t;
+always@(posedge(clk))
+begin
+t={j,k};
+case(t)
+2'b00:kk=kk;
+2'b01:kk=1'b0;
+2'b10:kk=1'b1;
+2'b11:kk=~kk;
+default: ;
+endcase
+q=kk;
+qb=~q;
+end
+endmodule
+
+test bench
+module ms_test;
+reg j,k,clk;
+wire q,qb;
+ms_ff my_ff1(j,k,clk,q,qb);
+initial
+
+clk=1'b0;
+
+always
+
+#5 clk=~clk;
+
+initial
+
+begin
+
+j=0;k=0;#10;
+
+j=0;k=1;#10;
+
+j=1;k=0;#10;
+
+j=1;k=1;#10;
+
+end
+
+endmodule
